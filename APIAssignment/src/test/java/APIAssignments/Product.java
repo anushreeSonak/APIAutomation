@@ -1,73 +1,84 @@
 package APIAssignments;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.http.Method;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import org.junit.Assert;
+import io.restassured.specification.RequestSpecification;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.logging.*;
 
+import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 
 public class Product {
+    private static String url;
 
-    final static String url = "https://automationexercise.com/api/productsList";
-
-    public static void main(String args[]) {
-        getResponseBody();
-        getResponseStatus();
-    }
-
-    public static void getResponseBody() {
-        // Send a GET request to the API endpoint and log the response body to the console
-        given()
-                .when()
-                .get(url)
-                .then()
-                .log()
-                .all();
-
-        // Send another GET request with query parameters and log the response body to the console
-        given()
-                .queryParam("ID", "8")
-                .queryParam("PRODUCT", "GRAPHIC DESIGN MEN T SHIRT - BLUE")
-                .queryParam("BRAND", "Mast & Harbour")
-                .when()
-                .get(url)
-                .then()
-                .log()
-                .body();
-    }
-
-    public static void getResponseStatus() {
-        // Send a GET request with query parameters to the API endpoint and get the response
-        Response response = given()
-                .queryParam("ID", "43")
-                .queryParam("PRODUCT", "GRAPHIC DESIGN MEN T SHIRT - BLUE")
-                .queryParam("BRAND", "Mast & Harbour")
-                .when()
-                .get(url);
-
-        // Get the status code of the response and print it to the console
-        int statusCode = response.getStatusCode();
-        System.out.println("The response status is " + statusCode);
-
-        // Assert that the status code is 200
-        Assert.assertEquals("Status code is not 200", 200, statusCode);
-
-        // Get the list of products from the response using JSONPath and assert that it is not null
-        ArrayList<String> products = response.jsonPath().get("products");
-        Assert.assertNotNull("Products list is null", products);
-
-        // Iterate through the list of products and assert that each product has a non-null ID, product name, and brand
-        for (String product : products) {
-            String id = response.jsonPath().get("id");
-            Assert.assertNotNull("ID is null", id);
-
-            String productName = response.jsonPath().get("product");
-            Assert.assertNotNull("Product name is null", productName);
-
-            String brand = response.jsonPath().get("brand");
-            Assert.assertNotNull("Brand is null", brand);
+    {
+        try {
+            url = ConfigReader.getUrl();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    private Logger logger = Logger.getLogger("Product.class");
+
+    @Test(priority = 1)
+    public void validateProductList() {
+        baseURI = url;
+        var getALLProductList = given().when().get(baseURI).then().log().all().toString();
+        logger.log(Level.INFO, "List return by API is " + getALLProductList);
+    }
+
+    @Test(priority = 2)
+    public void validateStatusCode() {
+        baseURI = url;
+        logger.info("getAllProductsList baseURI:" + baseURI);
+        RequestSpecification httpRequest = given();
+        Response response = httpRequest.request(Method.GET);
+        var getStatusCode = response.getStatusCode();
+        var getStatusLine = response.getStatusLine();
+        Assert.assertEquals(getStatusLine, "HTTP/1.1 200 OK");
+        logger.log(Level.INFO, "Status Code is : " + getStatusLine);
+
+        logger.log(Level.INFO, "Status Code is : " + getStatusCode);
+        Assert.assertEquals(getStatusCode, 200);
+    }
+
+    @Test(priority = 3)
+    public void validateContent() {
+        Response response = given().contentType(ContentType.JSON).when().get(url);
+        JsonPath jsonObject = new JsonPath(response.asString());
+        int size = jsonObject.getInt("products.size()");
+        for (int index = 0; index < size; index++) {
+            String id = jsonObject.getString("products[" + index + "].id");
+            String name = jsonObject.getString("products[" + index + "].name");
+            String price = jsonObject.getString("products[" + index + "].price");
+            String brand = jsonObject.getString("products[" + index + "].brand");
+            if (name.contains("Blue Top")) {
+                Assert.assertEquals(id, "1");
+                Assert.assertEquals(name, "Blue Top");
+                Assert.assertEquals(price, "Rs. 500");
+                Assert.assertEquals(brand, "Polo");
+                logger.info(" Product of Id is :" + id);
+                logger.info(" Product of Name is :" + name);
+                logger.info(" Product of Price is :" + price);
+                logger.info(" Product of Brand is :" + brand);
+            }
+        }
+    }
+
+    @Test(priority = 4)
+    public void validateLength() {
+        var response = given().when().get(url).then().extract().asString();
+        JsonPath jsonResponse = new JsonPath(response);
+        var idLength = jsonResponse.getInt("products.id.size()");
+        Assert.assertEquals(idLength, 34, "number of products are not expected");
+        logger.log(Level.INFO, "The length is : " + idLength + " products");
     }
 }
