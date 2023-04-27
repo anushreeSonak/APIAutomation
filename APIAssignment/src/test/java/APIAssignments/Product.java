@@ -68,7 +68,7 @@ public class Product {
                 logger.info(" Product of Id is :" + id);
                 logger.info(" Product of Name is :" + name);
                 logger.info(" Product of Price is :" + price);
-                logger.info(" Product of Brand is :" + brand);
+                logger.info(" Product of brand is :" + brand);
             }
         }
     }
@@ -78,7 +78,7 @@ public class Product {
         var response = given().when().get(url).then().extract().asString();
         JsonPath jsonResponse = new JsonPath(response);
         var idLength = jsonResponse.getInt("products.id.size()");
-        Assert.assertEquals(idLength, 34, "number of products are not expected");
+        Assert.assertEquals(idLength, 34, "number of products are Not expected");
         logger.log(Level.INFO, "The length is : " + idLength + " products");
     }
 }
