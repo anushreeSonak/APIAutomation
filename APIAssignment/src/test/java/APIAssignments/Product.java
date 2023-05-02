@@ -7,52 +7,66 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.apache.log4j.PropertyConfigurator;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.logging.*;
+import java.util.logging.Logger;
 
-import static io.restassured.RestAssured.baseURI;
-import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.*;
+
+//import static io.restassured.RestAssured.baseURI;
+//import static io.restassured.RestAssured.given;
 
 public class Product {
     private static String url;
+    private String productId;
+    private String productName;
+    private String productPrice;
+    private String productBrand;
 
-    {
-        try {
-            url = ConfigReader.getUrl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+    public Product() {
+        {
+            try {
+                url = ConfigReader.getUrl();
+                productId = ConfigReader.getid();
+                productName = ConfigReader.getname();
+                productPrice = ConfigReader.getprice();
+                productBrand = ConfigReader.getbrand();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
-    private Logger logger = Logger.getLogger("Product.class");
+    private static Logger logger = Logger.getLogger("Product.class");
+
+    @BeforeTest
+    public void getLoggerDisplay() {
+        PropertyConfigurator.configure("log4j2.properties");
+    }
 
     @Test(priority = 1)
-    public void validateProductList() {
-        baseURI = url;
-        var getALLProductList = given().when().get(baseURI).then().log().all().toString();
-        logger.log(Level.INFO, "List return by API is " + getALLProductList);
+    public void validateStatusCode() {
+        {
+            baseURI = url;
+            Response response = RestAssured.get(url).then().extract().response();
+            Assert.assertEquals(response.getStatusCode(), 200);
+            logger.info("Status code is " + response.getStatusCode());
+        }
     }
 
     @Test(priority = 2)
-    public void validateStatusCode() {
-        baseURI = url;
-        logger.info("getAllProductsList baseURI:" + baseURI);
-        RequestSpecification httpRequest = given();
-        Response response = httpRequest.request(Method.GET);
-        var getStatusCode = response.getStatusCode();
-        var getStatusLine = response.getStatusLine();
-        Assert.assertEquals(getStatusLine, "HTTP/1.1 200 OK");
-        logger.log(Level.INFO, "Status Code is : " + getStatusLine);
-
-        logger.log(Level.INFO, "Status Code is : " + getStatusCode);
-        Assert.assertEquals(getStatusCode, 200);
+    public void validateProductList() {
+        var getList = given().when().get(url).then().log().all().toString();
+        logger.info("Product List is " + getList);
     }
 
     @Test(priority = 3)
     public void validateContent() {
-        Response response = given().contentType(ContentType.JSON).when().get(url);
+        Response response = RestAssured.get(url).then().extract().response();
         JsonPath jsonObject = new JsonPath(response.asString());
         int size = jsonObject.getInt("products.size()");
         for (int index = 0; index < size; index++) {
@@ -60,15 +74,16 @@ public class Product {
             String name = jsonObject.getString("products[" + index + "].name");
             String price = jsonObject.getString("products[" + index + "].price");
             String brand = jsonObject.getString("products[" + index + "].brand");
-            if (name.contains("Blue Top")) {
-                Assert.assertEquals(id, "1");
-                Assert.assertEquals(name, "Blue Top");
-                Assert.assertEquals(price, "Rs. 500");
-                Assert.assertEquals(brand, "Polo");
-                logger.info(" Product of Id is :" + id);
-                logger.info(" Product of Name is :" + name);
-                logger.info(" Product of Price is :" + price);
-                logger.info(" Product of brand is :" + brand);
+            if (name.equals(productName)) {
+                logger.info(productId);
+                logger.info(productName);
+                logger.info(productBrand);
+                logger.info(productPrice);
+                Assert.assertEquals(id, productId);
+                Assert.assertEquals(name, productName);
+                Assert.assertEquals(price, productPrice);
+                Assert.assertEquals(brand, productBrand);
+                break;
             }
         }
     }
@@ -78,7 +93,7 @@ public class Product {
         var response = given().when().get(url).then().extract().asString();
         JsonPath jsonResponse = new JsonPath(response);
         var idLength = jsonResponse.getInt("products.id.size()");
+        logger.info("The length is : " + idLength + " products");
         Assert.assertEquals(idLength, 34, "number of products are Not expected");
-        logger.log(Level.INFO, "The length is : " + idLength + " products");
     }
 }
