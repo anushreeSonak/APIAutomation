@@ -1,23 +1,19 @@
 package APIAssignments;
 
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.apache.log4j.PropertyConfigurator;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static io.restassured.RestAssured.*;
-
-//import static io.restassured.RestAssured.baseURI;
-//import static io.restassured.RestAssured.given;
 
 public class Product {
     private static String url;
@@ -26,19 +22,19 @@ public class Product {
     private String productPrice;
     private String productBrand;
 
-
     public Product() {
-        {
-            try {
-                url = ConfigReader.getUrl();
-                productId = ConfigReader.getid();
-                productName = ConfigReader.getname();
-                productPrice = ConfigReader.getprice();
-                productBrand = ConfigReader.getbrand();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            url = ConfigReader.getUrl();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    public Product(String productId, String productName, String productPrice, String productBrand) {
+        this.productId = productId;
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.productBrand = productBrand;
     }
 
     private static Logger logger = Logger.getLogger("Product.class");
@@ -68,24 +64,29 @@ public class Product {
     public void validateContent() {
         Response response = RestAssured.get(url).then().extract().response();
         JsonPath jsonObject = new JsonPath(response.asString());
-        int size = jsonObject.getInt("products.size()");
-        for (int index = 0; index < size; index++) {
-            String id = jsonObject.getString("products[" + index + "].id");
-            String name = jsonObject.getString("products[" + index + "].name");
-            String price = jsonObject.getString("products[" + index + "].price");
-            String brand = jsonObject.getString("products[" + index + "].brand");
-            if (name.equals(productName)) {
-                logger.info(productId);
-                logger.info(productName);
-                logger.info(productBrand);
-                logger.info(productPrice);
-                Assert.assertEquals(id, productId);
-                Assert.assertEquals(name, productName);
-                Assert.assertEquals(price, productPrice);
-                Assert.assertEquals(brand, productBrand);
-                break;
+        List<Product> productList = jsonObject.getList("products");
+        List<Product> mockData = new ArrayList<>();
+        Product proLists = new Product("1", "Blue Top", "Rs. 500", "Polo");
+        mockData.add(proLists);
+        proLists = new Product("2", "Men Tshirt", "Rs. 400", "H&M");
+        mockData.add(proLists);
+
+        for (int index = 0; index < productList.size(); index++) {
+            for (Product mockProduct : mockData) {
+                if (jsonObject.getString("products[" + index + "].name").equals(mockProduct.productName)) {
+                    logger.info(mockProduct.productId);
+                    logger.info(mockProduct.productName);
+                    logger.info(mockProduct.productBrand);
+                    logger.info(mockProduct.productPrice);
+                    Assert.assertEquals(mockProduct.productId, jsonObject.getString("products[" + index + "].id"));
+                    Assert.assertEquals(mockProduct.productName, jsonObject.getString("products[" + index + "].name"));
+                    Assert.assertEquals(mockProduct.productPrice, jsonObject.getString("products[" + index + "].price"));
+                    Assert.assertEquals(mockProduct.productBrand, jsonObject.getString("products[" + index + "].brand"));
+                }
             }
         }
+
+
     }
 
     @Test(priority = 4)

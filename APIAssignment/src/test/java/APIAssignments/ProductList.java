@@ -11,6 +11,7 @@ import static io.restassured.RestAssured.given;
 
 public class ProductList {
     private static String url;
+
     {
         try {
             url = ConfigReader.getUrl();
