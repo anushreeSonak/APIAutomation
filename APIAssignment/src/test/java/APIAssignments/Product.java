@@ -66,10 +66,10 @@ public class Product {
         JsonPath jsonObject = new JsonPath(response.asString());
         List<Product> productList = jsonObject.getList("products");
         List<Product> mockData = new ArrayList<>();
-        Product p = new Product("1", "Blue Top", "Rs. 500", "Polo");
-        mockData.add(p);
-        p = new Product("2", "Men Tshirt", "Rs. 400", "H&M");
-        mockData.add(p);
+        Product productLists = new Product("1", "Blue Top", "Rs. 500", "Polo");
+        mockData.add(productLists);
+        productLists = new Product("2", "Men Tshirt", "Rs. 400", "H&M");
+        mockData.add(productLists);
         for (int i = 0; i < productList.size(); i++) {
             for (Product mockProduct : mockData) {
                 if (jsonObject.getString("products[" + i + "].name").equals(mockProduct.productName)) {
