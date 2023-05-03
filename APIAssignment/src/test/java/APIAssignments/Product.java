@@ -70,7 +70,6 @@ public class Product {
         mockData.add(proLists);
         proLists = new Product("2", "Men Tshirt", "Rs. 400", "H&M");
         mockData.add(proLists);
-
         for (int index = 0; index < productList.size(); index++) {
             for (Product mockProduct : mockData) {
                 if (jsonObject.getString("products[" + index + "].name").equals(mockProduct.productName)) {
@@ -85,8 +84,6 @@ public class Product {
                 }
             }
         }
-
-
     }
 
     @Test(priority = 4)
