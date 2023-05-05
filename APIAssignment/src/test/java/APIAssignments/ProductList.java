@@ -5,7 +5,6 @@ import io.restassured.response.Response;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONObject;
 import org.testng.Assert;
-import org.testng.ITestResult;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import java.io.IOException;
@@ -24,7 +23,7 @@ public class ProductList {
         }
     }
 
-    private static Logger logger = Logger.getLogger("PostProduct.class");
+    private static Logger logger = Logger.getLogger("ProductList.class");
 
     @BeforeTest
     public void getLoggerDisplay() {
@@ -34,8 +33,8 @@ public class ProductList {
     @Test(priority = 1)
     public void validateResponseCode() {
         Response response = given().when().post(url);
-        var result = response.body().asString();
-        JSONObject jsonObject = new JSONObject(result);
+        var results = response.body().asString();
+        JSONObject jsonObject = new JSONObject(results);
         var responseCode = jsonObject.get("responseCode");
         logger.info("responseCode: " + responseCode);
         Assert.assertEquals(responseCode, 405);
