@@ -24,7 +24,7 @@ public class ProductLists {
         }
     }
 
-    private static Logger logger = Logger.getLogger("ProductList.class");
+    private static Logger logger = Logger.getLogger("ProductLists.class");
 
     @BeforeTest
     public void getLoggerDisplay() {
