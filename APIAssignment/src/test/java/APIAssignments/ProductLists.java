@@ -7,15 +7,16 @@ import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
 import java.io.IOException;
 import java.util.logging.Logger;
 
 import static io.restassured.RestAssured.given;
 
-public class ProductList {
+public class ProductLists {
     private static String url;
 
-    public ProductList() {
+    public ProductLists() {
         try {
             url = ConfigReader.getUrl();
         } catch (IOException e) {
