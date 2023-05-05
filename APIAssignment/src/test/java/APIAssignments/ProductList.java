@@ -8,14 +8,7 @@ import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-//import io.restassured.response.Response;
-//import org.apache.log4j.PropertyConfigurator;
-//import org.testng.Assert;
-//import org.testng.annotations.BeforeTest;
-//import org.testng.annotations.Test;
-
 import java.io.IOException;
-//import java.io.ObjectInputFilter;
 import java.util.logging.Logger;
 
 import static io.restassured.RestAssured.given;
