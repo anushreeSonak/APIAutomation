@@ -2,6 +2,7 @@ package APIAssignments;
 
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONObject;
 import org.testng.Assert;
@@ -9,7 +10,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import static io.restassured.RestAssured.given;
 
@@ -24,7 +24,7 @@ public class ProductLists {
         }
     }
 
-    private static Logger logger = Logger.getLogger("ProductLists.class");
+    private static final Logger logger = Logger.getLogger("ProductLists.class");
 
     @BeforeTest
     public void getLoggerDisplay() {
