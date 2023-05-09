@@ -1,6 +1,6 @@
 /bin/
 .settings
-.idea
+/.idea/
 .project
 .classpath
 DemoNew.iml
