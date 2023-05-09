@@ -50,7 +50,7 @@ public class BrandList {
     @Test(priority = 2)
     public void getBrandList() {
         var getList = given().when().get(url).then().log().all().toString();
-        logger.info("Brand List is " + getList);
+        logger.info("Brand List is : " + getList);
     }
 
     @Test(priority = 3)
