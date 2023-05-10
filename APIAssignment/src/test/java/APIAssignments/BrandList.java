@@ -40,7 +40,6 @@ public class BrandList {
         PropertyConfigurator.configure("log4j2.properties");
     }
 
-
     @Test(priority = 1)
     public void getStatusCode() {
         Response response = RestAssured.get(url).then().extract().response();
