@@ -22,7 +22,7 @@ public class PutBrand {
         }
     }
 
-    private static Logger logger = Logger.getLogger("PutBrandList.class");
+    private static final Logger logger = Logger.getLogger("PutBrandList.class");
 
     @BeforeTest
     public void getLoggerDisplay() {
@@ -38,7 +38,6 @@ public class PutBrand {
         Assert.assertEquals(responseCode, 405);
     }
 
-
     @Test(priority = 2)
     public void getResponseMessage() {
         var response = given().when().put(url).then().extract().asString();
@@ -48,4 +47,3 @@ public class PutBrand {
         Assert.assertEquals(responseMessage, "This request method is not supported.");
     }
 }
-
