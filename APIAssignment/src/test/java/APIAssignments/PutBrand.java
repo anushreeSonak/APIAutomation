@@ -1,13 +1,13 @@
 package APIAssignments;
 
 import io.restassured.path.json.JsonPath;
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import static io.restassured.RestAssured.given;
 
