@@ -1,9 +1,6 @@
 package stepDefination;
 
-//import static APIAssignment.Product.url;
-
 import APIAssignments.ConfigReader;
-//import APIAssignments.Product;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -28,6 +25,8 @@ public class ProductBDD {
     private String productPrice;
     private String productBrand;
 
+    private static Logger logger = Logger.getLogger("ProductBDD.class");
+
     public ProductBDD() {
         try {
             url = ConfigReader.getUrl();
@@ -43,26 +42,24 @@ public class ProductBDD {
         this.productBrand = productBrand;
     }
 
-    private static Logger logger = Logger.getLogger("ProductBDD.class");
 
     @Given("valid page number is available")
-    public void valid_page_number_is_available() {
+    public void validatePageNumber() {
         PropertyConfigurator.configure("log4j2.properties");
     }
 
     @When("send request to get ProductList")
-    public void getList(){
+    public void getList() {
         var getList = given().when().get(url).then().log().all().toString();
         logger.info("Product List is " + getList);
     }
 
-   @Then("validate status code")
+    @Then("validate status code")
     public void validateStatusCode() throws IOException {
         url = ConfigReader.getUrl();
         Response response = RestAssured.get(ConfigReader.getUrl()).then().extract().response();
         Assert.assertEquals(response.getStatusCode(), 200);
         logger.info("Status code is " + response.getStatusCode());
-
     }
 
     @Then("validate content")
