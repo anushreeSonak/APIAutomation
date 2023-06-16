@@ -1,6 +1,8 @@
 package stepDefination;
 
+import APIAssignments.BaseClass;
 import APIAssignments.ConfigReader;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -8,95 +10,78 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import org.apache.log4j.PropertyConfigurator;
+import io.restassured.response.ResponseBody;
+import org.apache.log4j.Logger;
 import org.testng.Assert;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
-import static io.restassured.RestAssured.given;
 
 public class ProductBDD {
-    private static String url;
-    private String productId;
-    private String productName;
-    private String productPrice;
-    private String productBrand;
-
     private static Logger logger = Logger.getLogger("ProductBDD.class");
+    private static Response response;
+    private static JsonPath jsonObject;
 
-    public ProductBDD() {
-        try {
-            url = ConfigReader.getUrl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @Before
+    public void setUp() throws IOException {
+        BaseClass product = new BaseClass();
+        product.getLoggerDisplay();
     }
 
-    public ProductBDD(String productId, String productName, String productPrice, String productBrand) {
-        this.productId = productId;
-        this.productName = productName;
-        this.productPrice = productPrice;
-        this.productBrand = productBrand;
+    @Given("enter url and and get product list")
+    public void enterUrl() throws IOException {
+        response = RestAssured.get(ConfigReader.getUrl()).then().extract().response();
+        logger.info(response);
     }
 
-
-    @Given("valid page number is available")
-    public void validatePageNumber() {
-        PropertyConfigurator.configure("log4j2.properties");
+    @When("hit GET request get product list")
+    public void getProductList() throws IOException {
+        response = RestAssured.get(ConfigReader.getUrl()).then().extract().response();
+        ResponseBody getList = response.getBody();
+        logger.info("Response Body is: " + getList.asString());
+        Assert.assertNotNull(getList);
     }
 
-    @When("send request to get ProductList")
-    public void getList() {
-        var getList = given().when().get(url).then().log().all().toString();
-        logger.info("Product List is " + getList);
-    }
-
-    @Then("validate status code")
+    @Then("validate status code for GET product list")
     public void validateStatusCode() throws IOException {
-        url = ConfigReader.getUrl();
-        Response response = RestAssured.get(ConfigReader.getUrl()).then().extract().response();
-        Assert.assertEquals(response.getStatusCode(), 200);
         logger.info("Status code is " + response.getStatusCode());
+        Assert.assertEquals(response.getStatusCode(), 200);
     }
 
-    @Then("validate content")
-    public void validateContent() {
-        Response response = RestAssured.get(url).then().extract().response();
-        JsonPath jsonObject = new JsonPath(response.asString());
-        List<Object> productList = jsonObject.getList("products");
-        List<ProductBDD> mockData = new ArrayList<>();
-        ProductBDD productLists = new ProductBDD("1", "Blue Top", "Rs. 500", "Polo");
-        mockData.add(productLists);
-        productLists = new ProductBDD("2", "Men Tshirt", "Rs. 400", "H&M");
-        for (int index = 0; index < productList.size(); index++) {
-            mockData.add(productLists);
+    @Then("validate content for GET product list")
+    public void validateContentType() {
+        jsonObject = new JsonPath(response.asString());
+        var size = jsonObject.getInt("products.size()");
+        List<BaseClass> productData = new ArrayList<>();
+        BaseClass baseClassObject = new BaseClass("3", "Sleeveless Dress", "Rs. 1000", "Madame");
+        productData.add(baseClassObject);
+        baseClassObject = new BaseClass("2", "Men Tshirt", "Rs. 400", "H&M");
+        productData.add(baseClassObject);
+        for (int index = 0; index < size; index++) {
             String id = jsonObject.getString("products[" + index + "].id");
             String name = jsonObject.getString("products[" + index + "].name");
             String price = jsonObject.getString("products[" + index + "].price");
             String brand = jsonObject.getString("products[" + index + "].brand");
-            mockData.forEach(mockProduct -> {
-                if (name.equals(mockProduct.productName)) {
-                    logger.info(mockProduct.productId);
-                    logger.info(mockProduct.productName);
-                    logger.info(mockProduct.productBrand);
-                    logger.info(mockProduct.productPrice);
-                    Assert.assertEquals(mockProduct.productId, id);
-                    Assert.assertEquals(mockProduct.productName, name);
-                    Assert.assertEquals(mockProduct.productPrice, price);
-                    Assert.assertEquals(mockProduct.productBrand, brand);
+            productData.forEach(product -> {
+                if (name.equals(product.productName)) {
+                    logger.info(product.productId);
+                    logger.info(product.productName);
+                    logger.info(product.productBrand);
+                    logger.info(product.productPrice);
+                    Assert.assertEquals(product.productId, id);
+                    Assert.assertEquals(product.productName, name);
+                    Assert.assertEquals(product.productPrice, price);
+                    Assert.assertEquals(product.productBrand, brand);
                 }
             });
         }
     }
 
-    @And("validate length")
+    @And("validate length for GET product list")
     public void validateLength() {
-        var response = given().when().get(url).then().extract().asString();
-        JsonPath jsonResponse = new JsonPath(response);
-        var idLength = jsonResponse.getInt("products.id.size()");
+        jsonObject = new JsonPath(response.asString());
+        var idLength = jsonObject.getInt("products.id.size()");
         logger.info("The length is : " + idLength + " products");
         Assert.assertEquals(idLength, 34, "number of products are Not expected");
     }
