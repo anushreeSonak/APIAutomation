@@ -3,8 +3,6 @@ package APIAssignments;
 import org.apache.log4j.PropertyConfigurator;
 import org.testng.annotations.BeforeTest;
 
-import java.io.IOException;
-
 public class BaseClass {
 
     public static String url;
@@ -14,11 +12,7 @@ public class BaseClass {
     public String productBrand;
 
     public BaseClass() {
-        try {
-            url = ConfigReader.getUrl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        url = ConfigReader.getPropertyValue("baseURL");
     }
 
     public BaseClass(String productId, String productName, String productPrice, String productBrand) {

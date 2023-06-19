@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductBDD {
-    private static Logger logger = Logger.getLogger("ProductBDD.class");
+    private static final  Logger logger = Logger.getLogger("ProductBDD.class");
     private static Response response;
     private static JsonPath jsonObject;
 
@@ -31,13 +31,13 @@ public class ProductBDD {
 
     @Given("enter url and and get product list")
     public void enterUrl() throws IOException {
-        response = RestAssured.get(ConfigReader.getUrl()).then().extract().response();
+        response = RestAssured.get(ConfigReader.getPropertyValue("baseURL")).then().extract().response();
         logger.info(response);
     }
 
     @When("hit GET request get product list")
     public void getProductList() throws IOException {
-        response = RestAssured.get(ConfigReader.getUrl()).then().extract().response();
+        response = RestAssured.get(ConfigReader.getPropertyValue("baseURL")).then().extract().response();
         ResponseBody getList = response.getBody();
         logger.info("Response Body is: " + getList.asString());
         Assert.assertNotNull(getList);
@@ -54,10 +54,10 @@ public class ProductBDD {
         jsonObject = new JsonPath(response.asString());
         var size = jsonObject.getInt("products.size()");
         List<BaseClass> productData = new ArrayList<>();
-        BaseClass baseClassObject = new BaseClass("3", "Sleeveless Dress", "Rs. 1000", "Madame");
-        productData.add(baseClassObject);
-        baseClassObject = new BaseClass("2", "Men Tshirt", "Rs. 400", "H&M");
-        productData.add(baseClassObject);
+        var productId = ConfigReader.getPropertyValue("productId");
+        var productName = ConfigReader.getPropertyValue("productName");
+        var productPrice = ConfigReader.getPropertyValue("productPrice");
+        var productBand = ConfigReader.getPropertyValue("productBrand");
         for (int index = 0; index < size; index++) {
             String id = jsonObject.getString("products[" + index + "].id");
             String name = jsonObject.getString("products[" + index + "].name");
