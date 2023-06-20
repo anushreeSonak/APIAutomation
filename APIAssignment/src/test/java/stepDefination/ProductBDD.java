@@ -2,7 +2,6 @@ package stepDefination;
 
 import APIAssignments.BaseClass;
 import APIAssignments.ConfigReader;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -19,15 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductBDD {
-    private static final  Logger logger = Logger.getLogger("ProductBDD.class");
+    private static final Logger logger = Logger.getLogger("ProductBDD.class");
     private static Response response;
     private static JsonPath jsonObject;
 
-    @Before
-    public void setUp() throws IOException {
-        BaseClass product = new BaseClass();
-        product.getLoggerDisplay();
-    }
 
     @Given("enter url and and get product list")
     public void enterUrl() throws IOException {
