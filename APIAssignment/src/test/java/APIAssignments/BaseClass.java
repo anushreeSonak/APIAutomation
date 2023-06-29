@@ -3,16 +3,23 @@ package APIAssignments;
 import org.apache.log4j.PropertyConfigurator;
 import org.testng.annotations.BeforeTest;
 
+import static baseClass.BaseUrl.postEndUrl;
+
 public class BaseClass {
 
-    public static String url;
     public String productId;
     public String productName;
     public String productPrice;
     public String productBrand;
+    public static String url;
 
-    public BaseClass() {
-        url = ConfigReader.getPropertyValue("baseURL");
+
+    public BaseClass(){
+
+    }
+
+    public void getProductUrl() {
+        url= postEndUrl();
     }
 
     public BaseClass(String productId, String productName, String productPrice, String productBrand) {
@@ -24,6 +31,7 @@ public class BaseClass {
 
     @BeforeTest
     public void getLoggerDisplay() {
-        PropertyConfigurator.configure("log4j2.properties");
+        String userDirectory = System.getProperty("user.dir");
+        PropertyConfigurator.configure(userDirectory+ "log4j2.properties");
     }
 }
