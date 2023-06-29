@@ -9,7 +9,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,11 +20,7 @@ public class BrandList {
     private String brandName;
 
     public BrandList() {
-        try {
-            url = ConfigReader.getUrl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        url = ConfigReader.getPropertyValue("productId");
     }
 
     public BrandList(String brandId, String brandName) {

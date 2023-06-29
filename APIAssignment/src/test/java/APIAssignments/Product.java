@@ -17,17 +17,13 @@ import static io.restassured.RestAssured.*;
 
 public class Product {
     private static String url;
-    private String productId;
-    private String productName;
-    private String productPrice;
-    private String productBrand;
+    public String productId;
+    public String productName;
+    public String productPrice;
+    public String productBrand;
 
     public Product() {
-        try {
-            url = ConfigReader.getUrl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        url = ConfigReader.getPropertyValue("baseURL");
     }
 
     public Product(String productId, String productName, String productPrice, String productBrand) {
@@ -41,14 +37,15 @@ public class Product {
 
     @BeforeTest
     public void getLoggerDisplay() {
+
         PropertyConfigurator.configure("log4j2.properties");
     }
 
     @Test(priority = 1)
     public void validateStatusCode() throws IOException {
         {
-            baseURI = ConfigReader.getUrl();
-            Response response = RestAssured.get(ConfigReader.getUrl()).then().extract().response();
+            baseURI = ConfigReader.getPropertyValue("productId");
+            Response response = RestAssured.get(ConfigReader.getPropertyValue("productId")).then().extract().response();
             Assert.assertEquals(response.getStatusCode(), 200);
             logger.info("Status code is " + response.getStatusCode());
         }

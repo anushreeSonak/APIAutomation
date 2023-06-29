@@ -7,19 +7,13 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
 import static io.restassured.RestAssured.given;
 
 public class PutBrand {
     private String url;
 
     public PutBrand() {
-        try {
-            url = ConfigReader.getUrl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        url = ConfigReader.getPropertyValue("productId");
     }
 
     private static final Logger logger = Logger.getLogger("PutBrandList.class");
