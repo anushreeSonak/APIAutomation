@@ -3,8 +3,7 @@ package baseClass;
 import org.apache.log4j.PropertyConfigurator;
 import org.testng.annotations.BeforeTest;
 
-import static baseClass.EndPoint.postUrl;
-import static baseClass.EndPoint.putUrl;
+import static baseClass.EndPoint.*;
 import static java.lang.System.getProperties;
 
 public class BaseUrl {
@@ -15,12 +14,12 @@ public class BaseUrl {
     }
 
     public static String postEndUrl() {
-        String getFinalUrl = productBaseUrl() + postUrl();
+        String getFinalUrl = productBaseUrl() + productURL();
         return getFinalUrl;
     }
 
     public static String putBrandUrl() {
-        String finalUrl = productBaseUrl() + putUrl();
+        String finalUrl = productBaseUrl() + brandURL();
         return finalUrl;
     }
     @BeforeTest

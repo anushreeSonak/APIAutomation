@@ -1,11 +1,11 @@
 package baseClass;
 
 public class EndPoint {
-    public static String postUrl() {
+    public static String productURL() {
         return "productsList";
     }
 
-    public static String putUrl() {
+    public static String brandURL() {
         return "brandsList";
     }
 }
