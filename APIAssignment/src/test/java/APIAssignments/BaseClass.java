@@ -1,8 +1,5 @@
 package APIAssignments;
 
-import org.apache.log4j.PropertyConfigurator;
-import org.testng.annotations.BeforeTest;
-
 import static baseClass.BaseUrl.postEndUrl;
 
 public class BaseClass {
@@ -27,11 +24,5 @@ public class BaseClass {
         this.productName = productName;
         this.productPrice = productPrice;
         this.productBrand = productBrand;
-    }
-
-    @BeforeTest
-    public void getLoggerDisplay() {
-        String userDirectory = System.getProperty("user.dir");
-        PropertyConfigurator.configure(userDirectory+ "log4j2.properties");
     }
 }
