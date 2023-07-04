@@ -1,4 +1,4 @@
-package APIAssignments;
+package config;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,7 +12,7 @@ public class ConfigReader {
         FileInputStream file = null;
         Properties properties = new Properties();
         try {
-            file = new FileInputStream(userDirectory + "/Config.properties");
+            file = new FileInputStream(userDirectory + "/config/config.properties");
             properties.load(file);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
