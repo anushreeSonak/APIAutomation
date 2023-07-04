@@ -1,5 +1,6 @@
 package APIAssignments;
 
+import config.ConfigReader;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -16,11 +17,12 @@ import java.util.logging.Logger;
 import static io.restassured.RestAssured.*;
 
 public class Product {
+    
     private static String url;
-    public String productId;
-    public String productName;
-    public String productPrice;
-    public String productBrand;
+    private String productId;
+    private String productName;
+    private String productPrice;
+    private String productBrand;
 
     public Product() {
         url = ConfigReader.getPropertyValue("baseURL");
